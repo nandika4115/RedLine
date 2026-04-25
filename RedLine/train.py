@@ -270,6 +270,8 @@ def run_rl(sft_checkpoint: str | None = None, num_steps: int = 200):
         save_strategy="steps",
         save_steps=50,
         bf16=torch.cuda.is_bf16_supported(),
+        num_generations=4,
+        generation_batch_size=4,
     )
 
     # TRL 1.2.0: 'tokenizer' -> 'processing_class'
