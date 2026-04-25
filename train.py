@@ -116,6 +116,17 @@ def save_reward_plot(rewards: list[float], path: str = "reward_curve.png"):
     print(f"Reward curve saved to {path}")
 
 
+# ── Detect TRL version for API compatibility ──────────────────────────────────
+
+def _trl_version_tuple():
+    try:
+        import trl
+        parts = trl.__version__.split(".")
+        return tuple(int(x) for x in parts[:2])
+    except Exception:
+        return (0, 0)
+
+
 # ── Phase 1: SFT ─────────────────────────────────────────────────────────────
 
 def run_sft(num_epochs: int = 3):
@@ -141,6 +152,10 @@ def run_sft(num_epochs: int = 3):
 
     dataset = dataset.map(lambda x: {"text": format_example(x)})
 
+    # ── TRL >=0.13 renamed max_seq_length → max_length in SFTConfig ──────────
+    trl_major, trl_minor = _trl_version_tuple()
+    seq_len_kwarg = "max_length" if (trl_major, trl_minor) >= (0, 13) else "max_seq_length"
+
     config = SFTConfig(
         output_dir=str(SFT_DIR),
         num_train_epochs=num_epochs,
@@ -151,7 +166,7 @@ def run_sft(num_epochs: int = 3):
         logging_steps=5,
         save_strategy="epoch",
         bf16=torch.cuda.is_bf16_supported(),
-        max_seq_length=1024,
+        **{seq_len_kwarg: 1024},
         dataset_text_field="text",
         report_to="none",
     )
