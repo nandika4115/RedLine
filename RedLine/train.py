@@ -227,8 +227,10 @@ def run_rl(sft_checkpoint: str | None = None, num_steps: int = 200):
     model_path = sft_checkpoint or MODEL_ID
     print(f"  Loading from: {model_path}")
 
-    model, tokenizer = load_model_and_tokenizer(model_path, use_4bit=True)
-    if sft_checkpoint is None:
+    if sft_checkpoint is not None:
+        model, tokenizer = load_model_and_tokenizer(model_path, use_4bit=False)
+    else:
+        model, tokenizer = load_model_and_tokenizer(model_path, use_4bit=True)
         model = add_lora(model)
 
     reward_fn = build_env_reward_fn()
