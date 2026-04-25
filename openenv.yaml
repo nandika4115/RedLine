@@ -1,0 +1,31 @@
+name: clinical_pilot
+version: 0.1.0
+description: >
+  ClinicalPilot — The first RL training environment for clinical trial protocol design.
+  An LLM agent learns to design a complete Phase 2 oncology trial protocol across 50 steps,
+  with causal dependency tracking and regulatory schema drift injection.
+  Themes: Long-Horizon Planning (#2), Professional World Modeling (#3.1), Wild Card (#5),
+  Patronus schema drift, Snorkel expert simulation.
+
+client:
+  class_name: ClinicalTrialEnv
+  module: clinical_pilot.server
+
+action:
+  class_name: ClinicalAction
+  module: clinical_pilot.models
+
+observation:
+  class_name: ClinicalObservation
+  module: clinical_pilot.models
+
+default_image: clinical-pilot:latest
+spec_version: 1
+
+tags:
+  - clinical-trials
+  - long-horizon
+  - schema-drift
+  - professional-tasks
+  - oncology
+  - regulatory-ai
