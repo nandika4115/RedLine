@@ -3,7 +3,7 @@ requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "clinical_pilot"
+name = "RedLine"
 version = "0.1.0"
 description = "ClinicalPilot — OpenEnv environment for clinical trial protocol design"
 readme = "README.md"
