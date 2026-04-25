@@ -1,5 +1,5 @@
 """
-ClinicalPilot — OpenEnv server (Environment).
+RedLine — OpenEnv server (Environment).
 
 Implements:
   reset()  → ClinicalObservation

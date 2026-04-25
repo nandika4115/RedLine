@@ -109,7 +109,7 @@ def test_fda_too_early():
 
 
 if __name__ == "__main__":
-    print("Running ClinicalPilot smoke tests...")
+    print("Running RedLine smoke tests...")
     test_happy_path()
     test_drift_detection()
     test_bad_endpoint_penalty()

@@ -1,5 +1,5 @@
 """
-train.py — ClinicalPilot training script.
+train.py — RedLine training script.
 Compatible with: TRL 1.2.0, Transformers 5.0.0, PyTorch 2.10+
 
 Phase 1: SFT on expert trajectories (pre-warms the model)
@@ -44,7 +44,7 @@ from RedLine.models import ClinicalAction, ToolName
 from RedLine.server import ClinicalTrialEnv
 
 MODEL_ID   = "Qwen/Qwen2.5-1.5B-Instruct"
-OUTPUT_DIR = Path("./outputs/clinical_pilot")
+OUTPUT_DIR = Path("./outputs/RedLine")
 SFT_DIR    = OUTPUT_DIR / "sft_checkpoint"
 RL_DIR     = OUTPUT_DIR / "rl_checkpoint"
 
@@ -94,7 +94,7 @@ def save_reward_plot(rewards: list[float], path: str = "reward_curve.png"):
         ax.plot(rolling, linewidth=2.5, color="#F44336", label=f"Rolling avg (w={window})")
     ax.set_xlabel("Training Step")
     ax.set_ylabel("Reward")
-    ax.set_title("ClinicalPilot — Reward Curve")
+    ax.set_title("RedLine — Reward Curve")
     ax.legend()
     ax.grid(True, alpha=0.3)
     plt.tight_layout()
@@ -361,7 +361,7 @@ def evaluate_agent(model_path: str, n_episodes: int = 10, label: str = "agent"):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="ClinicalPilot Training")
+    parser = argparse.ArgumentParser(description="RedLine Training")
     parser.add_argument("--phase", choices=["sft", "rl", "both", "eval"], default="both")
     parser.add_argument("--sft_epochs", type=int, default=3)
     parser.add_argument("--rl_steps",   type=int, default=200)

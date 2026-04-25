@@ -1,7 +1,7 @@
 """
-ClinicalPilot — FastAPI HTTP server.
+RedLine — FastAPI HTTP server.
 Exposes /reset, /step, /state endpoints per OpenEnv spec.
-Run: uvicorn clinical_pilot.app:app --host 0.0.0.0 --port 7860
+Run: uvicorn RedLine.app:app --host 0.0.0.0 --port 7860
 """
 from __future__ import annotations
 
@@ -12,7 +12,7 @@ from pydantic import BaseModel
 from .models import ClinicalAction, ClinicalObservation, EpisodeState
 from .server import ClinicalTrialEnv
 
-app = FastAPI(title="ClinicalPilot", version="0.1.0")
+app = FastAPI(title="RedLine", version="0.1.0")
 
 app.add_middleware(
     CORSMiddleware,

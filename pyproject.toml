@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "RedLine"
 version = "0.1.0"
-description = "ClinicalPilot — OpenEnv environment for clinical trial protocol design"
+description = "RedLine — OpenEnv environment for clinical trial protocol design"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
@@ -30,4 +30,4 @@ train = [
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["clinical_pilot*"]
+include = ["RedLine*"]

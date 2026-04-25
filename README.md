@@ -11,7 +11,7 @@ app_file: app.py
 > **The first RL training environment for clinical trial protocol design.**
 
 [![OpenEnv](https://img.shields.io/badge/OpenEnv-compatible-blue)](https://meta-pytorch.org/OpenEnv)
-[![HuggingFace](https://img.shields.io/badge/HuggingFace-Space-yellow)](https://huggingface.co/spaces/YOUR_HF_USERNAME/clinical_pilot)
+[![HuggingFace](https://img.shields.io/badge/HuggingFace-Space-yellow)](https://huggingface.co/spaces/YOUR_HF_USERNAME/RedLine)
 [![Theme](https://img.shields.io/badge/Theme-%232%20Long--Horizon-green)](https://docs.google.com/document/d/...)
 
 ---
@@ -77,8 +77,8 @@ The **consistency checker** is deterministic and instant (rule-based) — provid
 | FDA approval rate | ~5% | ~70% |
 | Drift detection rate | ~10% | ~80% |
 
-![Reward Curve](outputs/clinical_pilot/reward_curve.png)
-![Before vs After](outputs/clinical_pilot/before_after.png)
+![Reward Curve](outputs/RedLine/reward_curve.png)
+![Before vs After](outputs/RedLine/before_after.png)
 
 ---
 
@@ -101,10 +101,10 @@ See the [Colab notebook](ClinicalPilot_Training.ipynb) for a runnable end-to-end
 ## Quickstart
 
 ```bash
-pip install git+https://huggingface.co/spaces/YOUR_HF_USERNAME/clinical_pilot
+pip install git+https://huggingface.co/spaces/YOUR_HF_USERNAME/RedLine
 
-from clinical_pilot.server import ClinicalTrialEnv
-from clinical_pilot.models import ClinicalAction, ToolName
+from RedLine.server import ClinicalTrialEnv
+from RedLine.models import ClinicalAction, ToolName
 
 env = ClinicalTrialEnv(max_steps=50)
 obs = env.reset()
@@ -158,7 +158,7 @@ Agent
 
 ## Links
 
-- [HuggingFace Space](https://huggingface.co/spaces/YOUR_HF_USERNAME/clinical_pilot)
+- [HuggingFace Space](https://huggingface.co/spaces/YOUR_HF_USERNAME/RedLine)
 - [Training Notebook (Colab)](ClinicalPilot_Training.ipynb)
 - [HuggingFace Blog Post](https://huggingface.co/blog/YOUR_HF_USERNAME/clinical-pilot)
 

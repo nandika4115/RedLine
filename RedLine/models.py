@@ -1,5 +1,5 @@
 """
-ClinicalPilot — Pydantic models for OpenEnv.
+RedLine — Pydantic models for OpenEnv.
 Action / Observation / State for a Phase-2 oncology protocol designer.
 """
 from __future__ import annotations
