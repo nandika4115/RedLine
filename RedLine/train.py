@@ -228,9 +228,31 @@ def run_rl(sft_checkpoint: str | None = None, num_steps: int = 200):
     print(f"  Loading from: {model_path}")
 
     if sft_checkpoint is not None:
-        model, tokenizer = load_model_and_tokenizer(model_path, use_4bit=False)
+        # SFT checkpoint is a PEFT/LoRA model — load base first, then attach adapter
+        from peft import PeftModel
+        bnb_config = BitsAndBytesConfig(
+            load_in_4bit=True,
+            bnb_4bit_quant_type="nf4",
+            bnb_4bit_compute_dtype=torch.bfloat16,
+            bnb_4bit_use_double_quant=True,
+        ) if torch.cuda.is_available() else None
+
+        base_model = AutoModelForCausalLM.from_pretrained(
+            MODEL_ID,                        # <-- load original base, NOT the checkpoint
+            quantization_config=bnb_config,
+            device_map="auto",
+            trust_remote_code=True,
+        )
+        model = PeftModel.from_pretrained(
+            base_model,
+            sft_checkpoint,                  # <-- attach LoRA weights from SFT checkpoint
+            is_trainable=True,               # <-- keep trainable for RL
+        )
+        tokenizer = AutoTokenizer.from_pretrained(MODEL_ID, trust_remote_code=True)
+        if tokenizer.pad_token is None:
+            tokenizer.pad_token = tokenizer.eos_token
     else:
-        model, tokenizer = load_model_and_tokenizer(model_path, use_4bit=True)
+        model, tokenizer = load_model_and_tokenizer(MODEL_ID, use_4bit=True)
         model = add_lora(model)
 
     reward_fn = build_env_reward_fn()
