@@ -6,7 +6,7 @@
 
 ## The problem it is solving
 
-Clinical trial protocols take months, cost millions, and still fail regulatory review — not because the science is wrong, but because the *rules changed mid-process*. Endpoints shifted. Thresholds revised. A compliant decision in January becomes a violation by March.
+Clinical trial protocols take months, cost millions, and still fail regulatory review — not because the science is wrong, but because the *rules changed mid-process*. Endpoints shifted. Thresholds revised. A compliant decision in January becomes a violation by March.Get any one of these wrong and the FDA sends a Complete Response Letter — a rejection that sets you back 12–18 months and $500K–$2M in fees.
 
 Current AI systems can't handle this. They're optimized for one question: *is this output correct right now?* They have no mechanism to detect when the ground has moved — and adapt.
 
