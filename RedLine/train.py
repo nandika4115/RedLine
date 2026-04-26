@@ -156,12 +156,11 @@ def run_sft(num_epochs: int = 3):
 
 
 def build_env_reward_fn():
-    env = ClinicalTrialEnv(max_steps=50)
-    env.reset()
-
     def reward_fn(completions: list[str], prompts: list[str], **kwargs) -> list[float]:
         rewards = []
         for completion in completions:
+            env = ClinicalTrialEnv(max_steps=50)
+            env.reset()
             try:
                 action_dict = json.loads(completion.strip())
                 tool = action_dict.get("tool", "")

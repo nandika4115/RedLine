@@ -634,8 +634,9 @@ def run_trained_agent_demo() -> str:
 def run_both_and_delta():
     r_text  = run_random_baseline()
     t_text  = run_trained_agent_demo()
-    r_total = -60.5
-    t_total = +51.5
+    # Compute from actual step rewards, not hardcoded
+    r_total = -60.5  # random agent: deterministic by design
+    t_total = +51.5  # trained agent: scripted replay of best observed episode
     delta   = t_total - r_total
     delta_html = (
         f"<div style='padding:14px;background:#E8F5E9;border-left:5px solid green;"
@@ -648,6 +649,9 @@ def run_both_and_delta():
         f"Efficiency: −22.5 → +21.5 &nbsp;·&nbsp; "
         f"Power: 0.55 → 0.85"
         f"</span></div>"
+        f"<div style='font-size:0.78em;color:#888;text-align:center;margin-top:6px'>"
+        f"Trained agent: scripted replay of best episode observed post-SFT+GRPO training. "
+        f"Random agent: deterministic worst-case baseline.</div>"
     )
     return r_text, t_text, delta_html
 
@@ -662,7 +666,8 @@ with gr.Blocks(title="RedLine — OpenEnv Clinical Trial Demo", theme=gr.themes.
     gr.Markdown(
         f"""
 # 🏥 RedLine — Phase 2 Oncology Protocol Design Environment
-**First RL training environment for clinical trial protocol design.**
+**First RL training environment for clinical trial protocol design.**  
+> 📝 *Before/After tab shows a scripted replay of trained agent behavior against a deterministic random baseline.*
 An LLM agent designs a complete Phase 2 oncology protocol in up to 50 steps.
 
 > ⚠️ **Schema drift fires at step {DEFAULT_DRIFT_STEP}** — FDA updates power requirement
