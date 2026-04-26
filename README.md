@@ -220,6 +220,14 @@ Beyond the direct application: RedLine is a benchmark for **professional-domain 
 **This domain has no prior RL environment.** That's the gap RedLine fills.
 
 ---
+## Future Work
+
+- Extending RedLine beyond clinical trials to domains like financial compliance and tax regulation
+- Incorporating real-world regulatory datasets for higher fidelity environments
+- Replacing rule-based evaluators with learned or hybrid judge models
+- Scaling to longer-horizon tasks with richer dependency structures
+---
+
 ## Themes Covered
 
 - **#2 Long-Horizon Planning** — endpoint at step 0 constrains analysis plan at step 30
