@@ -33,7 +33,7 @@ No RL training environment existed to teach agents to do this work. Until now.
 
 - 🤗 [HuggingFace Space (live demo)](https://huggingface.co/spaces/nandika4115/RedLine)
 - 📓 [Training Notebook (Colab)](https://colab.research.google.com/drive/1kjWStW2lNalKqFzyCrE05RB1AfdLthEK?usp=sharing)
-- 📝 [HuggingFace Blog Post](https://huggingface.co/blog/nandika4115/redline-clinical-trial-rl)
+- 📝 [HuggingFace Blog Post](BLOG.md)
 
 ---
 
