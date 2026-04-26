@@ -9,6 +9,8 @@ These are used for SFT to create a pre-warmed baseline BEFORE RL.
 """
 
 import json
+import random
+
 
 # ---------------------------------------------------------------------------
 # Helper — format observation into a text prompt for the LLM
@@ -175,6 +177,67 @@ def make_perfect_episode_with_drift() -> list[dict]:
 # Generate all SFT pairs
 # ---------------------------------------------------------------------------
 
+ENDPOINT_VARIANTS = [
+    ("Overall Survival", "primary"),
+    ("Progression-Free Survival", "primary"),
+]
+POWER_VARIANTS = [0.80, 0.82, 0.85]
+CRITERIA_VARIANTS = [
+    (["ECOG PS 0-1", "Stage IIIB/IV NSCLC", "Age ≥ 18"], ["Prior platinum-based chemotherapy"]),
+    (["ECOG PS 0-2", "Stage IV NSCLC", "Measurable disease per RECIST 1.1"], ["Active CNS metastases", "Autoimmune disease"]),
+    (["ECOG PS 0-1", "Stage IIIB/IV", "Age ≥ 18", "Adequate organ function"], ["Prior immunotherapy"]),
+]
+METHOD_VARIANTS = [
+    ["Kaplan-Meier", "Log-rank test", "Cox proportional hazards"],
+    ["Kaplan-Meier", "Log-rank test", "Bayesian adaptive"],
+    ["Kaplan-Meier", "Cox proportional hazards", "iRECIST criteria"],
+]
+
+def make_varied_episode(with_drift: bool = False) -> list[dict]:
+    endpoint, ep_type = random.choice(ENDPOINT_VARIANTS)
+    power = random.choice(POWER_VARIANTS)
+    criteria, exclusion = random.choice(CRITERIA_VARIANTS)
+    methods = random.choice(METHOD_VARIANTS)
+    
+    steps = [
+        {"prompt_obs": {"step": 0, "protocol_summary": {"primary_endpoint": None, "inclusion_criteria": [], "sample_size": None, "analysis_methods": [], "guidance_version": "v1"}, "consistency_warnings": [], "schema_drift_alert": None},
+         "action": {"tool": "draft_endpoint", "arguments": {"endpoint": endpoint, "endpoint_type": ep_type}}},
+        {"prompt_obs": {"step": 1, "protocol_summary": {"primary_endpoint": endpoint, "inclusion_criteria": [], "sample_size": None, "analysis_methods": [], "guidance_version": "v1"}, "consistency_warnings": [], "schema_drift_alert": None},
+         "action": {"tool": "set_inclusion_criteria", "arguments": {"criteria": criteria, "exclusion": exclusion}}},
+        {"prompt_obs": {"step": 2, "protocol_summary": {"primary_endpoint": endpoint, "inclusion_criteria": criteria, "sample_size": None, "analysis_methods": [], "guidance_version": "v1"}, "consistency_warnings": [], "schema_drift_alert": None},
+         "action": {"tool": "run_power_calc", "arguments": {"effect_size": round(random.uniform(0.25, 0.40), 2), "alpha": 0.05, "power": power}}},
+        {"prompt_obs": {"step": 3, "protocol_summary": {"primary_endpoint": endpoint, "inclusion_criteria": criteria, "sample_size": 176, "analysis_methods": [], "guidance_version": "v1"}, "consistency_warnings": [], "schema_drift_alert": None},
+         "action": {"tool": "draft_analysis_plan", "arguments": {"methods": methods}}},
+    ]
+    
+    if with_drift:
+        steps.append({
+            "prompt_obs": {"step": 20, "protocol_summary": {"primary_endpoint": endpoint, "inclusion_criteria": criteria, "sample_size": 176, "power": power, "analysis_methods": methods, "guidance_version": "v2"},
+                           "consistency_warnings": [{"field": "power", "message": "Power below new minimum 0.85"}],
+                           "schema_drift_alert": "FDA Guidance UPDATE (v2): Power requirement raised to >= 0.85."},
+            "action": {"tool": "run_power_calc", "arguments": {"effect_size": 0.3, "alpha": 0.05, "power": 0.85}}
+        })
+    return steps
+
+def generate_sft_dataset() -> list[dict]:
+    dataset = []
+    for _ in range(15):
+        traj = make_varied_episode(with_drift=False)
+        for step_data in traj:
+            dataset.append({"messages": [
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "user", "content": make_prompt(step_data["prompt_obs"])},
+                {"role": "assistant", "content": json.dumps(step_data["action"])}
+            ]})
+    for _ in range(10):
+        traj = make_varied_episode(with_drift=True)
+        for step_data in traj:
+            dataset.append({"messages": [
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "user", "content": make_prompt(step_data["prompt_obs"])},
+                {"role": "assistant", "content": json.dumps(step_data["action"])}
+            ]})
+    return dataset
 def generate_sft_dataset() -> list[dict]:
     """
     Returns a list of {"messages": [...]} dicts in HuggingFace chat format.

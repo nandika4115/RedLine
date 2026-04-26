@@ -161,6 +161,8 @@ def build_env_reward_fn():
         for completion in completions:
             env = ClinicalTrialEnv(max_steps=50)
             env.reset()
+            
+            # Parse this action
             try:
                 action_dict = json.loads(completion.strip())
                 tool = action_dict.get("tool", "")
@@ -169,15 +171,41 @@ def build_env_reward_fn():
             except Exception:
                 rewards.append(-5.0)
                 continue
+            
+            # Simulate a full episode with this action first, then optimal remaining
+            optimal_followup = [
+                ClinicalAction(tool=ToolName.DRAFT_ENDPOINT,
+                               arguments={"endpoint": "Overall Survival",
+                                          "endpoint_type": "primary"}),
+                ClinicalAction(tool=ToolName.SET_INCLUSION_CRITERIA,
+                               arguments={"criteria": ["ECOG PS 0-1", "Stage IIIB/IV"],
+                                          "exclusion": ["Prior platinum therapy"]}),
+                ClinicalAction(tool=ToolName.RUN_POWER_CALC,
+                               arguments={"effect_size": 0.3, "alpha": 0.05, "power": 0.85}),
+                ClinicalAction(tool=ToolName.DRAFT_ANALYSIS_PLAN,
+                               arguments={"methods": ["Kaplan-Meier", "Log-rank test",
+                                                      "Cox proportional hazards"]}),
+                ClinicalAction(tool=ToolName.SIMULATE_FDA_REVIEW, arguments={}),
+            ]
+            
             try:
-                _, step_reward, done = env.step(action)
-                if done:
-                    env.reset()
-                rewards.append(step_reward)
+                # Take the agent's action first
+                _, first_reward, done = env.step(action)
+                cum_reward = first_reward
+                
+                if not done:
+                    # Complete episode with optimal actions
+                    for followup in optimal_followup:
+                        _, r, done = env.step(followup)
+                        cum_reward += r
+                        if done:
+                            break
+                
+                rewards.append(cum_reward)
             except Exception:
                 rewards.append(-3.0)
+                
         return rewards
-
     return reward_fn
 
 
